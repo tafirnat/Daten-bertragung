@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="de" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Datenübertragung · Rechner</title>
+    <style>
+        /* ----- minimalistic, dark, modern ----- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0c0c0c;
+            --bg-surface: #1a1a1a;
+            --bg-surface-raised: #242424;
+            --border-subtle: #2e2e2e;
+            --text-primary: #eaeaea;
+            --text-secondary: #a0a0a0;
+            --accent-blue: #4a9eff;
+            --accent-green: #2ecc71;
+            --accent-red: #e74c3c;
+            --accent-orange: #f39c12;
+            --accent-purple: #b283f0;
+            --accent-gray: #5a5a5a;
+            --font-mono: 'Fira Code', 'Roboto Mono', 'SF Mono', monospace;
+            --radius: 20px;
+            --radius-sm: 12px;
+            --shadow-faint: 0 8px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .card {
+            max-width: 750px;
+            width: 100%;
+            background: var(--bg-surface);
+            border-radius: var(--radius);
+            padding: 2rem 1.8rem;
+            box-shadow: var(--shadow-faint);
+            border: 1px solid var(--border-subtle);
+            transition: all 0.2s ease;
+        }
+
+        /* header */
+        .headline {
+            font-weight: 500;
+            font-size: 1.8rem;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.25rem;
+            color: var(--text-primary);
+        }
+        .subhead {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            border-left: 3px solid var(--accent-blue);
+            padding-left: 1rem;
+        }
+
+        /* frage */
+        .frage-container {
+            background: var(--bg-surface-raised);
+            border-radius: var(--radius-sm);
+            padding: 1.5rem 1.2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .frage-text {
+            font-size: 1.4rem;
+            font-weight: 450;
+            word-break: break-word;
+            font-family: var(--font-mono);
+            color: #f0f0f0;
+        }
+
+        /* eingabebereich */
+        .zeit-eingabe {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 2rem;
+            align-items: center;
+        }
+        .zeit-eingabe label {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-right: 0.2rem;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            background: var(--bg-surface-raised);
+            border: 1px solid var(--border-subtle);
+            border-radius: 40px;
+            padding: 0.2rem 0.2rem 0.2rem 1.2rem;
+            flex: 1 1 180px;
+            transition: border 0.15s;
+        }
+        .input-group:focus-within {
+            border-color: var(--accent-blue);
+        }
+        .input-group input {
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            padding: 0.7rem 0rem 0.7rem 0;
+            width: 100%;
+            min-width: 70px;
+            outline: none;
+            font-family: var(--font-mono);
+        }
+        .input-group span {
+            color: var(--text-secondary);
+            padding: 0 0.9rem 0 0.4rem;
+            font-size: 0.95rem;
+        }
+
+        /* button reihe */
+        .aktionen {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin: 2rem 0 1.2rem;
+            justify-content: space-between;
+        }
+        .btn {
+            background: var(--bg-surface-raised);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            padding: 0.85rem 1.4rem;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1 0 auto;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            line-height: 1;
+            white-space: nowrap;
+        }
+        .btn:hover {
+            background: #2a2a2a;
+            border-color: #3d3d3d;
+            transform: translateY(-1px);
+        }
+        .btn:active {
+            transform: translateY(1px);
+            background: #1f1f1f;
+        }
+        .btn-primary {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: #000;
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            background: #63abff;
+            border-color: #63abff;
+        }
+        .btn-clear {
+            background: transparent;
+            border-color: #3a3a3a;
+            color: var(--text-secondary);
+        }
+
+        /* ergebnis + details */
+        .ergebnis-leiste {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px dashed var(--border-subtle);
+        }
+        .pruefung {
+            font-size: 1.3rem;
+            font-weight: 450;
+            font-family: var(--font-mono);
+        }
+        .pruefung.richtig {
+            color: var(--accent-green);
+        }
+        .pruefung.falsch {
+            color: var(--accent-red);
+        }
+        .loesungstext {
+            color: var(--accent-orange);
+            font-size: 1.1rem;
+            font-family: var(--font-mono);
+            background: #1e1a14;
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            border: 1px solid #3d3d3d;
+            transition: opacity 0.2s;
+        }
+        .loesungstext.hidden {
+            display: none;
+        }
+
+        /* details / schritte container */
+        .details-container {
+            margin: 1.5rem 0 0.5rem;
+            border-radius: var(--radius-sm);
+            background: #131313;
+            border: 1px solid #2a2a2a;
+            overflow: hidden;
+        }
+        .details-summary {
+            padding: 1rem 1.5rem;
+            background: #1d1d1d;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--accent-gray);
+            list-style: none;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid #2a2a2a;
+            opacity: 0.7;
+            transition: opacity 0.2s, color 0.2s;
+        }
+        .details-summary::-webkit-details-marker {
+            display: none;
+        }
+        .details-summary::before {
+            content: "▶";
+            font-size: 0.9rem;
+            color: var(--accent-gray);
+            transition: transform 0.2s;
+        }
+        details[open] .details-summary::before {
+            transform: rotate(90deg);
+        }
+        
+        /* aktif durum - butonlardan birine tıklandıktan sonra */
+        .details-container.active .details-summary {
+            color: var(--accent-purple);
+            opacity: 1;
+        }
+        .details-container.active .details-summary::before {
+            color: var(--accent-purple);
+        }
+        
+        .details-content {
+            padding: 1.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.95rem;
+            background: #0f0f0f;
+            color: #c0c0c0;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            border-bottom-left-radius: var(--radius-sm);
+            border-bottom-right-radius: var(--radius-sm);
+        }
+        .details-content strong {
+            color: #e0e0e0;
+            font-weight: 600;
+        }
+
+        /* mobiler finetune */
+        @media (max-width: 500px) {
+            .card { padding: 1.5rem 1rem; }
+            .frage-text { font-size: 1.2rem; }
+            .btn { padding: 0.75rem 0.8rem; font-size: 0.95rem; }
+            .zeit-eingabe { flex-direction: column; align-items: stretch; }
+            .input-group { width: 100%; }
+            .aktionen { flex-wrap: wrap; }
+        }
+
+        /* anki addon bereich — ausgeblendet */
+        .anki-controls-wrapper, .anki-hidden-options, #ankiConnectNotificationOverlay {
+            display: none !important;
+        }
+        .footnote {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 2rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="headline">⏳ Datenübertragung</div>
+    <div class="subhead">Aufgabe · Schätzung · Kontrolle · Schritt für Schritt</div>
+
+    <!-- Frageanzeige -->
+    <div class="frage-container">
+        <span class="frage-text" id="question">Datentransferrate: 100 Mb/s, Datenmenge: 548 GiB, Maximale Rate: 17%</span>
+    </div>
+
+    <!-- Eingabe Stunden / Minuten -->
+    <div class="zeit-eingabe">
+        <div class="input-group">
+            <input type="number" id="hours" placeholder="0" min="0" value="">
+            <span>Std.</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="minutes" placeholder="0" min="0" max="59" value="">
+            <span>Min.</span>
+        </div>
+    </div>
+
+    <!-- Knöpfe: Generate, Show, Check, Clear -->
+    <div class="aktionen">
+        <button class="btn" id="gen" title="Neue Zufallsaufgabe">📡 Generieren</button>
+        <button class="btn" id="solve" title="Lösung anzeigen">🔍 Zeigen</button>
+        <button class="btn btn-primary" id="check" title="Eingabe prüfen">✅ Prüfen</button>
+        <button class="btn btn-clear" id="btn_clear">🗕 Zurücksetzen</button>
+    </div>
+
+    <!-- Ergebnis & Rückmeldung -->
+    <div class="ergebnis-leiste">
+        <span id="checkmark" class="pruefung"></span>
+        <span id="truesol" class="loesungstext hidden"></span>
+    </div>
+
+    <!-- DETAILS / SCHRITTE - nur nach Button-Klick aktiv -->
+    <details id="detailsBox" class="details-container">
+        <summary class="details-summary">Rechenweg anzeigen</summary>
+        <div class="details-content" id="detailsContent">
+            <!-- Hier wird Schritt für Schritt befüllt -->
+            🔒 Bitte zuerst auf "Zeigen" oder "Prüfen" klicken, um den Rechenweg freizuschalten.
+        </div>
+    </details>
+
+    <div class="footnote">Minuten werden kaufmännisch aufgerundet.</div>
+</div>
+
+<script>
+    (function() {
+        // ----- DOM-Elemente -----
+        const questionEl = document.getElementById('question');
+        const hoursEl = document.getElementById('hours');
+        const minutesEl = document.getElementById('minutes');
+        const genBtn = document.getElementById('gen');
+        const solveBtn = document.getElementById('solve');
+        const checkBtn = document.getElementById('check');
+        const clearBtn = document.getElementById('btn_clear');
+        const detailsBox = document.getElementById('detailsBox');
+        const detailsContent = document.getElementById('detailsContent');
+        const checkmarkEl = document.getElementById('checkmark');
+        const truesolEl = document.getElementById('truesol');
+
+        // Konstanten & Hilfsvariablen
+        const rates = [100, 250, 400, 1000, 2000, 4000, 10000];
+        const STORAGE_KEY = 'time';
+
+        // Durum değişkeni - detayların erişilebilir olup olmadığı
+        let detailsAccessible = false;
+
+        // ----- Hilfsfunktionen -----
+        function zeigeLoesungText(sichtbar, text = '') {
+            if (sichtbar && text.trim() !== '') {
+                truesolEl.innerText = text;
+                truesolEl.classList.remove('hidden');
+            } else {
+                truesolEl.innerText = '';
+                truesolEl.classList.add('hidden');
+            }
+        }
+
+        function berechneGerundeteZeit(totalSec) {
+            let hours = Math.floor(totalSec / 3600);
+            let minutesFloor = Math.floor(totalSec / 60);
+            let minutes = minutesFloor - hours * 60;
+            let diff = totalSec - (hours * 3600 + minutes * 60);
+            if (diff !== 0.0) {
+                if (minutes === 59) {
+                    minutes = 0;
+                    hours += 1;
+                } else {
+                    minutes += 1;
+                }
+            }
+            return { hours, minutes };
+        }
+
+        function berechneDetailsAusSession() {
+            const raw = sessionStorage.getItem(STORAGE_KEY);
+            if (!raw) {
+                return "❌ Keine Aufgabe generiert. Klicke auf „Generieren“.";
+            }
+            const totalSec = parseFloat(raw);
+            if (isNaN(totalSec)) return "❌ Ungültige Daten.";
+
+            let frag = questionEl.innerText;
+            const rateMatch = frag.match(/(\d+(?:[.,]\d+)?)\s*(Gb\/s|Mb\/s)/);
+            const dataMatch = frag.match(/Datenmenge:\s*(\d+)\s*GiB/);
+            const maxMatch = frag.match(/Maximale Rate:\s*(\d+)%/);
+
+            if (!rateMatch || !dataMatch || !maxMatch) {
+                let { hours, minutes } = berechneGerundeteZeit(totalSec);
+                return `📐 Rechenweg (basierend auf aktueller Aufgabe):\n⏱️ Benötigte Zeit: ${hours} Std. ${minutes} Min. (gerundet)`;
+            }
+
+            let rateValue = parseFloat(rateMatch[1].replace(',', '.'));
+            const unit = rateMatch[2];
+            const dataGiB = parseInt(dataMatch[1]);
+            const maxPercent = parseInt(maxMatch[1]);
+
+            let rateMbits = (unit === 'Gb/s') ? rateValue * 1000 : rateValue;
+            const maxRateFactor = maxPercent / 100;
+            const maxRateBits = rateMbits * 1_000_000 * maxRateFactor;
+            const datenBits = dataGiB * 1024 * 1024 * 1024 * 8;
+            const zeitSek = datenBits / maxRateBits;
+            let { hours, minutes } = berechneGerundeteZeit(zeitSek);
+
+            const formatNum = (n) => n.toLocaleString('de-DE', { maximumFractionDigits: 2, minimumFractionDigits: 2 });
+
+            let detail = `📐 **Rechenweg**\n\n`;
+            detail += `**Ausgangsdaten:**\n`;
+            detail += `• Datenrate: ${rateValue} ${unit} (entspricht ${rateMbits} Mb/s)\n`;
+            detail += `• Datenmenge: ${dataGiB} GiB\n`;
+            detail += `• max. Auslastung: ${maxPercent}%\n\n`;
+
+            detail += `**1. Maximale effektive Rate in bit/s:**\n`;
+            detail += `   ${rateMbits} Mb/s = ${rateMbits} × 10⁶ bit/s = ${(rateMbits*1e6).toExponential(2)} bit/s\n`;
+            detail += `   mit ${maxPercent}% → ${rateMbits} × 10⁶ × ${maxPercent/100} = ${(maxRateBits).toExponential(2)} bit/s (max. effektiv)\n\n`;
+
+            detail += `**2. Datenmenge in bit:**\n`;
+            detail += `   1 GiB = 2³⁰ Byte = 1.073.741.824 Byte\n`;
+            detail += `   ${dataGiB} GiB = ${dataGiB} × 1.073.741.824 Byte = ${(dataGiB * 1073741824).toExponential(2)} Byte\n`;
+            detail += `   in bit: × 8 → ${(datenBits).toExponential(2)} bit\n\n`;
+
+            detail += `**3. Übertragungszeit (Sekunden):**\n`;
+            detail += `   Zeit = Daten / Rate = ${(datenBits).toExponential(2)} bit / ${(maxRateBits).toExponential(2)} bit/s\n`;
+            detail += `   = ${formatNum(zeitSek)} s\n\n`;
+
+            detail += `**4. Umrechnung in Stunden & Minuten (kaufmännisch gerundet):**\n`;
+            detail += `   ${formatNum(zeitSek)} s ÷ 3600 = ${(zeitSek/3600).toFixed(4)} h\n`;
+            detail += `   → ${hours} Stunden und ${minutes} Minuten (gerundet)`;
+
+            return detail;
+        }
+
+        function updateDetailsContent() {
+            if (!detailsAccessible) {
+                // Erişim yoksa uyarı mesajı göster
+                detailsContent.innerHTML = '🔒 Bitte zuerst auf "Zeigen" oder "Prüfen" klicken, um den Rechenweg freizuschalten.';
+                return;
+            }
+            
+            const inhalt = berechneDetailsAusSession();
+            let htmlInhalt = inhalt.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+            detailsContent.innerHTML = htmlInhalt;
+        }
+
+        // Details erişimini aktif et
+        function enableDetailsAccess() {
+            if (!detailsAccessible) {
+                detailsAccessible = true;
+                detailsBox.classList.add('active');
+                
+                // Eğer details açıksa içeriği güncelle
+                if (detailsBox.open) {
+                    updateDetailsContent();
+                }
+            }
+        }
+
+        // Details erişimini devre dışı bırak
+        function disableDetailsAccess() {
+            detailsAccessible = false;
+            detailsBox.classList.remove('active');
+            
+            // İçeriği kilit mesajıyla güncelle
+            if (detailsBox.open) {
+                updateDetailsContent();
+            }
+        }
+
+        // toggle event: her açılışta içeriği güncelle
+        detailsBox.addEventListener('toggle', function() {
+            if (detailsBox.open) {
+                updateDetailsContent();
+            }
+        });
+
+        // ----- Zufallsaufgabe generieren -----
+        function generiereAufgabe() {
+            const transrateIndex = Math.floor(Math.random() * rates.length);
+            const rawRate = rates[transrateIndex];
+            const useGigabit = rawRate >= 1000;
+            const dataGiB = Math.floor(Math.random() * 500) + 100;
+            const maxPercent = Math.floor(Math.random() * 29) + 12;
+
+            let fragentext = '';
+            if (useGigabit) {
+                const rateGbit = (rawRate / 1000).toFixed(1).replace(/\.0$/, '');
+                fragentext = `Datentransferrate: ${rateGbit} Gb/s, Datenmenge: ${dataGiB} GiB, Maximale Rate: ${maxPercent}%`;
+            } else {
+                fragentext = `Datentransferrate: ${rawRate} Mb/s, Datenmenge: ${dataGiB} GiB, Maximale Rate: ${maxPercent}%`;
+            }
+
+            const bitrate = rawRate * 1_000_000;
+            const datenBits = dataGiB * 1024 * 1024 * 1024 * 8;
+            const effektiveRate = bitrate * (maxPercent / 100);
+            const zeitSekunden = datenBits / effektiveRate;
+
+            sessionStorage.setItem(STORAGE_KEY, zeitSekunden.toString());
+            questionEl.innerText = fragentext;
+            zeigeLoesungText(false);
+            checkmarkEl.innerText = '';
+            
+            // Yeni görevde detay erişimini kapat
+            disableDetailsAccess();
+            detailsBox.removeAttribute('open');
+        }
+
+        function zeigeLoesung() {
+            const raw = sessionStorage.getItem(STORAGE_KEY);
+            if (!raw) {
+                zeigeLoesungText(true, '⚠️ erst Aufgabe generieren');
+                return;
+            }
+            const totalSec = parseFloat(raw);
+            if (isNaN(totalSec)) return;
+
+            const { hours, minutes } = berechneGerundeteZeit(totalSec);
+            const result = `Nötige Zeit: ${hours} Std. und ${minutes} Min.`;
+            zeigeLoesungText(true, result);
+            
+            // 🔍 ZEIGEN: Detay erişimini aktif et ve aç
+            enableDetailsAccess();
+            if (!detailsBox.open) {
+                detailsBox.setAttribute('open', 'true');
+            } else {
+                updateDetailsContent(); // Zaten açıksa içeriği güncelle
+            }
+        }
+
+        function pruefeEingabe() {
+            const raw = sessionStorage.getItem(STORAGE_KEY);
+            if (!raw) {
+                checkmarkEl.innerText = 'erst generieren';
+                checkmarkEl.style.color = 'var(--text-secondary)';
+                return;
+            }
+            const totalSec = parseFloat(raw);
+            if (isNaN(totalSec)) return;
+
+            const { hours, minutes } = berechneGerundeteZeit(totalSec);
+
+            const inHours = hoursEl.value.trim() === '' ? NaN : Number(hoursEl.value.trim());
+            const inMinutes = minutesEl.value.trim() === '' ? NaN : Number(minutesEl.value.trim());
+
+            if (!isNaN(inHours) && !isNaN(inMinutes) && inHours === hours && inMinutes === minutes) {
+                checkmarkEl.innerText = '✔ Richtig';
+                checkmarkEl.style.color = 'var(--accent-green)';
+            } else {
+                checkmarkEl.innerText = '✘ Falsch';
+                checkmarkEl.style.color = 'var(--accent-red)';
+            }
+            
+            // ✅ PRÜFEN: Detay erişimini aktif et ve aç
+            enableDetailsAccess();
+            if (!detailsBox.open) {
+                detailsBox.setAttribute('open', 'true');
+            } else {
+                updateDetailsContent(); // Zaten açıksa içeriği güncelle
+            }
+        }
+
+        function resetAll() {
+            generiereAufgabe();
+            hoursEl.value = '';
+            minutesEl.value = '';
+            checkmarkEl.innerText = '';
+            zeigeLoesungText(false);
+            disableDetailsAccess();
+            detailsBox.removeAttribute('open');
+        }
+
+        // ---- Event Listener ----
+        genBtn.addEventListener('click', () => {
+            generiereAufgabe();
+            hoursEl.value = '';
+            minutesEl.value = '';
+            checkmarkEl.innerText = '';
+            zeigeLoesungText(false);
+        });
+
+        solveBtn.addEventListener('click', zeigeLoesung);
+        checkBtn.addEventListener('click', pruefeEingabe);
+        clearBtn.addEventListener('click', resetAll);
+
+        // Enter in inputs
+        hoursEl.addEventListener('keypress', (e) => { if (e.key === 'Enter') pruefeEingabe(); });
+        minutesEl.addEventListener('keypress', (e) => { if (e.key === 'Enter') pruefeEingabe(); });
+
+        // Initialisierung
+        function ersteAufgabe() {
+            if (!sessionStorage.getItem(STORAGE_KEY)) {
+                generiereAufgabe();
+            } else {
+                generiereAufgabe();
+            }
+            hoursEl.value = '';
+            minutesEl.value = '';
+            zeigeLoesungText(false);
+            disableDetailsAccess();
+            detailsBox.removeAttribute('open');
+        }
+
+        ersteAufgabe();
+    })();
+</script>
+
+<!-- Anki-Addon unsichtbar -->
+<div id="ankiConnectNotificationOverlay" style="display:none"></div>
+<div class="anki-controls-wrapper" style="display:none"></div>
+</body>
+</html>
