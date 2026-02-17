@@ -2,6 +2,14 @@
 
 Einfaches Tool zur Berechnung von Datenübertragungszeiten. Übe mit zufällig generierten Aufgaben und sieh dir die Lösungen Schritt für Schritt an.
 
+**Live Demo:** [tafirnat.github.io/Daten-bertragung/](https://tafirnat.github.io/Daten-bertragung/)
+
+## 📸 Screenshots
+
+| Aufgabenansicht | Lösungsansicht |
+|:---------------:|:---------------:|
+| <img src="/assets/Screenshot%202026-02-17%20151553.png" width="300"> | <img src="/assets/Screenshot%202026-02-17%20151616.png" width="300"> |
+
 ## 🚀 Funktionen
 - Zufällige Aufgaben (verschiedene Raten, Datengrößen, Auslastungen)
 - Dunkles Design, einfache Benutzeroberfläche
@@ -16,6 +24,6 @@ Einfaches Tool zur Berechnung von Datenübertragungszeiten. Übe mit zufällig g
 
 ## 🔧 Installation
 ```bash
-git clone https://github.com/tafirnat/datenuebertragung-rechner.git
-cd datenuebertragung-rechner
+git clone https://github.com/tafirnat/Daten-bertragung.git
+cd Daten-bertragung
 # index.html im Browser öffnen
