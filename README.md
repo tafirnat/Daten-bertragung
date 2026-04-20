@@ -1,5 +1,9 @@
 # ⏳ Datenübertragung · Rechner
 
+[![Live Demo](https://img.shields.io/badge/Demo-Online-brightgreen.svg)](https://tafirnat.github.io/Daten-bertragung/)
+![Lizenz](https://img.shields.io/badge/Lizenz-MIT-blue.svg)
+![Technologien](https://img.shields.io/badge/Tech-HTML5%20%7C%20CSS3%20%7C%20JS-orange)
+
 Einfaches Tool zur Berechnung von Datenübertragungszeiten. Übe mit zufällig generierten Aufgaben und sieh dir die Lösungen Schritt für Schritt an.
 
 **Live Demo:** [tafirnat.github.io/Daten-bertragung/](https://tafirnat.github.io/Daten-bertragung/)
